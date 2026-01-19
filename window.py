@@ -86,6 +86,7 @@ class TranslatorWindow:
         self.is_visible = False
         self.hwnd = None
         self.bg_color = COLORS['background']
+        self.copy_button = None
         
     def create_window(self):
         """Create the main window."""
@@ -144,15 +145,20 @@ class TranslatorWindow:
         result_row = tk.Frame(result_content, bg=COLORS['result_bg'])
         result_row.pack(fill=tk.X)
         
-        # Google icon
-        self.google_label = tk.Label(
+        # Google icon removed as per request
+        # self.google_label = tk.Label(...)
+
+        # Copy button
+        self.copy_button = tk.Label(
             result_row,
-            text=" G ",
-            font=('Arial', 11, 'bold'),
-            fg='white',
-            bg=COLORS['accent'],
+            text="📋",
+            font=('Segoe UI', 12),
+            fg=COLORS['text_secondary'],
+            bg=COLORS['result_bg'],
+            cursor="hand2"
         )
-        self.google_label.pack(side=tk.LEFT, padx=(0, 10))
+        self.copy_button.pack(side=tk.RIGHT, padx=5)
+        self.copy_button.bind('<Button-1>', lambda e: self.copy_to_clipboard())
         
         # Translated text
         self.translated_label = tk.Label(
@@ -235,11 +241,28 @@ class TranslatorWindow:
             
         self.result_frame.pack(fill=tk.X, pady=(10, 0), padx=4)
         self.adjust_height(True)
-        
+
+    def copy_to_clipboard(self):
+        """Copy translated text to clipboard."""
+        text = self.translated_label.cget("text")
+        if text:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(text)
+            # Visual feedback
+            orig_color = self.copy_button.cget("fg")
+            self.copy_button.config(fg="#ffffff")
+            self.root.after(200, lambda: self.copy_button.config(fg=orig_color))
+
     def adjust_height(self, with_result: bool):
         """Adjust window height based on content."""
         if with_result:
-            new_height = 150
+            self.root.update_idletasks()
+            # Calculate required height based on content
+            # Input area is roughly 60px
+            # Result frame height comes from its content
+            # Add extra padding (80px) to ensure source info is visible
+            required_height = 90 + self.result_frame.winfo_reqheight()
+            new_height = max(160, required_height)
         else:
             new_height = WINDOW_HEIGHT
             

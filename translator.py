@@ -92,5 +92,6 @@ class TranslationService:
             'hu': 'Macarca',
             'ro': 'Rumence',
             'uk': 'Ukraynaca',
+            'ms': 'Malayca',
         }
         return languages.get(code, code.upper())

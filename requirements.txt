@@ -1,0 +1,4 @@
+keyboard>=0.13.5
+googletrans==4.0.0-rc1
+pystray>=0.19.4
+Pillow>=9.0.0
